@@ -1,0 +1,29 @@
+{
+  "name": "sst-indesign-export",
+  "version": "0.0.0-semantically-released",
+  "description": "InDesign export script for Sjöfartstidningen",
+  "main": "index.js",
+  "repository": "https://github.com/sjofartstidningen/sst-indesign-export.git",
+  "author": "Adam Bergman <adam@fransvilhelm.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "extend-scripts bundle",
+    "test": "extend-scripts test --passWithNoTests",
+    "lint": "extend-scripts lint",
+    "format": "extend-scripts format",
+    "precommit": "extend-scripts precommit",
+    "validate":
+      "yarn run lint && yarn run test --no-watch --passWithNoTests && yarn run build",
+    "release": "extend-scripts release"
+  },
+  "devDependencies": {
+    "cz-conventional-changelog": "^2.1.0",
+    "extend-scripts": "^2.0.4"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
