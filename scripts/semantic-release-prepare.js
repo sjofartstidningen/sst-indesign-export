@@ -7,7 +7,7 @@ const pkg = require('../package.json');
 const writeFile = promisify(fs.writeFile);
 const exec = promisify(cp.exec);
 
-async function prepare(pluginConfig, { nexRelease: { version }, logger }) {
+async function prepare(pluginConfig, { nextRelease: { version }, logger }) {
   const newPkg = Object.assign({}, pkg, { version });
   const content = JSON.stringify(newPkg, null, 2);
   await writeFile(path.join(__dirname, '../package.json'), content, 'utf8');
