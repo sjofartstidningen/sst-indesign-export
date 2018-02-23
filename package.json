@@ -15,10 +15,11 @@
     "precommit": "extend-scripts precommit",
     "validate":
       "yarn run lint && yarn run test --no-watch --passWithNoTests && yarn run build",
-    "release": "extend-scripts release"
+    "release": "semantic-release"
   },
   "dependencies": {
-    "JSON2": "^0.1.0"
+    "JSON2": "^0.1.0",
+    "semantic-release": "^15.0.0"
   },
   "devDependencies": {
     "cz-conventional-changelog": "^2.1.0",
