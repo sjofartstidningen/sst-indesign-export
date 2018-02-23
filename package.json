@@ -9,12 +9,11 @@
   "private": true,
   "scripts": {
     "build": "TARGET_ENV=indesign extend-scripts bundle",
-    "test": "extend-scripts test --passWithNoTests",
+    "test": "extend-scripts test",
     "lint": "extend-scripts lint",
     "format": "extend-scripts format",
     "precommit": "extend-scripts precommit",
-    "validate":
-      "yarn run lint && yarn run test --no-watch --passWithNoTests && yarn run build",
+    "validate": "yarn run lint && yarn run test --no-watch && yarn run build",
     "release": "semantic-release"
   },
   "dependencies": {
