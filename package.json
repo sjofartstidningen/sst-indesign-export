@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "extend-scripts bundle",
+    "build": "TARGET_ENV=indesign extend-scripts bundle",
     "test": "extend-scripts test --passWithNoTests",
     "lint": "extend-scripts lint",
     "format": "extend-scripts format",
@@ -16,6 +16,9 @@
     "validate":
       "yarn run lint && yarn run test --no-watch --passWithNoTests && yarn run build",
     "release": "extend-scripts release"
+  },
+  "dependencies": {
+    "JSON2": "^0.1.0"
   },
   "devDependencies": {
     "cz-conventional-changelog": "^2.1.0",
