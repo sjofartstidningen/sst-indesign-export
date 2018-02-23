@@ -116,6 +116,11 @@ const padStart = (length, fill = ' ', str) => {
   return newStr;
 };
 
+const tap = fn => x => {
+  fn(x);
+  return x;
+};
+
 /**
  * Parse a range formatted input (eg. "1,3,6-10") to an array of numbers
  *
@@ -164,5 +169,6 @@ export {
   toNumber,
   clamp,
   padStart,
+  tap,
   parseRange,
 };

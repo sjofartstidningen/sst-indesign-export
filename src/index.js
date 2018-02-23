@@ -16,6 +16,7 @@ import {
   pipe,
   clamp,
   padStart,
+  tap,
 } from './utils';
 import ConfigStore from './utils/configstore';
 import pkg from '../package.json';
@@ -188,25 +189,26 @@ function exportPages(doc, { pages, preset, folder, generateName }) {
 
   progressWindow.show();
 
-  const tasks = map(page => {
-    const fileName = generateName(page);
-    const actualFolder = new Folder(folder);
+  let actualFolder = new Folder(folder);
+  if (!actualFolder.exists) actualFolder = actualFolder.create();
+  const folderPath = actualFolder.absoluteURI;
 
-    if (!actualFolder.exists) actualFolder.create();
+  const exportPdf = pipe(
+    tap(p => {
+      doc.parent.pdfExportPreferences.pageRange = `${p}`; // eslint-disable-line no-param-reassign
+    }),
+    generateName,
+    fileName =>
+      doc.asynchronousExportFile(
+        ExportFormat.PDF_TYPE,
+        new File(join(folderPath, fileName)),
+        false,
+        preset,
+      ),
+    tap(progressWindow.increase),
+  );
 
-    const args = [
-      ExportFormat.PDF_TYPE,
-      new File(join(actualFolder.absoluteURI, fileName)),
-      false,
-      preset,
-    ];
-
-    doc.parent.pdfExportPreferences.pageRange = `${page}`; // eslint-disable-line no-param-reassign
-    const task = doc.asynchronousExportFile(...args);
-    progressWindow.increase();
-
-    return task;
-  }, pages);
+  const tasks = map(exportPdf, pages);
 
   progressWindow.close();
   return tasks;
@@ -224,8 +226,12 @@ function main() {
       pages,
       preset,
       folder: documentData.exportFolder,
-      generateName: i =>
-        `${documentData.year}-${documentData.issue}-${padStart(3, '0', i)}.pdf`,
+      generateName: page =>
+        `${documentData.year}-${documentData.issue}-${padStart(
+          3,
+          '0',
+          page,
+        )}.pdf`,
     });
   } catch (err) {
     alert(err.message);
