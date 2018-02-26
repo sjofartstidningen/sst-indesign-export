@@ -36,7 +36,7 @@ const config = new ConfigStore({
  * @returns {Object}
  */
 function getDocumentData(doc) {
-  const re = /\/(\d{4})\/(\d{2})$/;
+  const re = /\/(\d{4})\/(.{2,})$/g;
   const [, year, issue] = re.exec(doc.filePath);
 
   const validYear = year && !Number.isNaN(Number.parseInt(year, 10));
