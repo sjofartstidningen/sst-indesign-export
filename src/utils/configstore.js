@@ -1,5 +1,5 @@
 import { join } from 'path';
-import json from 'JSON2';
+import * as json from './json';
 
 class ConfigStore {
   constructor({ name, version, defaultConfig = {} } = {}) {
