@@ -21,6 +21,7 @@ import {
   getMarkdownAnchor,
   openUrl,
 } from './utils';
+import i18n from './utils/i18n';
 import errors from './utils/errors';
 import ConfigStore from './utils/configstore';
 import pkg from '../package.json';
@@ -32,6 +33,8 @@ const config = new ConfigStore({
     exportRoot: null,
   },
 });
+
+const translate = i18n($.locale);
 
 function getCurrentDocument(application) {
   try {
@@ -63,10 +66,14 @@ function getDocumentData(doc) {
 
   if (!exportRoot) {
     alert(
-      'This is the first time you are using this script\nYou therefore have to choose the root folder to export to',
+      translate(
+        'This is the first time you are using this script\nYou therefore have to choose the root folder to export to',
+      ),
     );
 
-    const result = createFolderChooser({ label: 'Choose root folder' });
+    const result = createFolderChooser({
+      label: translate('Choose root folder'),
+    });
     if (result.cancel) throw new Error(errors.cancelUser);
 
     config.set('exportRoot', result.value.absoluteURI);
@@ -101,9 +108,9 @@ function getDocumentData(doc) {
  * @returns Array<number>
  */
 function getPagesRange(firstPage, lastPage) {
-  const allPages = 'All pages'; // Keyword for selecting all pages
+  const allPages = translate('All pages'); // Keyword for selecting all pages
   const input = createInputWindow({
-    name: 'Choose pages:',
+    name: translate('Choose pages:'),
     initial: allPages,
   });
 
@@ -162,8 +169,8 @@ function getPdfPreset() {
   );
 
   const dropdown = createDropdownWindow({
-    name: 'Choose PDF-preset',
-    label: 'Presets:',
+    name: translate('Choose PDF-preset'),
+    label: translate('Presets:'),
     items: presets,
     initial,
   });
@@ -193,8 +200,8 @@ function getPdfPreset() {
  */
 function exportPages(doc, { pages, preset, folder, generateName }) {
   const progressWindow = createProgressbarWindow({
-    name: 'Exporting',
-    label: 'Exporting pages',
+    name: translate('Exporting'),
+    label: translate('Exporting pages'),
     max: pages.length,
   });
 
@@ -246,8 +253,8 @@ function main() {
     });
   } catch (err) {
     const errorWindow = createErrorWindow({
-      name: 'An error occured',
-      label: err.message,
+      name: translate('An error occured'),
+      label: translate(err.message),
     });
     const { viewHelp } = errorWindow.show();
 
