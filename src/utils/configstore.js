@@ -41,7 +41,7 @@ class ConfigStore {
     configFile.open('w');
     configFile.encoding = 'UTF-8';
     configFile.lineFeed = 'Unix';
-    configFile.writeln(json.stringify({ ...config }, null, 2));
+    configFile.writeln(json.stringify(config));
     configFile.close();
   };
 
