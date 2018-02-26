@@ -1,5 +1,5 @@
 import { join } from 'path';
-import json from 'JSON2';
+import * as json from './json';
 
 class ConfigStore {
   constructor({ name, version, defaultConfig = {} } = {}) {
@@ -41,7 +41,7 @@ class ConfigStore {
     configFile.open('w');
     configFile.encoding = 'UTF-8';
     configFile.lineFeed = 'Unix';
-    configFile.writeln(json.stringify({ ...config }, null, 2));
+    configFile.writeln(json.stringify(config));
     configFile.close();
   };
 

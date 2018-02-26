@@ -1,9 +1,9 @@
+import errors from './errors';
+
 const range = (from, to) => {
   const too = to + 1;
   if (from > to) {
-    throw new Error(
-      `From (${from}) must be greater than or equal to to (${to})`,
-    );
+    throw new Error(errors.fromGreaterThanTo);
   }
 
   const len = too - from;
@@ -156,6 +156,38 @@ const parseRange = str => {
   }
 };
 
+const getMarkdownAnchor = str => {
+  const text = str
+    .replace(/ /g, '-')
+    .replace(/%([abcdef]|\d){2,2}/gi, '')
+    .replace(/[\/?!:\[\]`.,()*"';{}+=<>~\$|#@&–—]/g, '') // eslint-disable-line
+    .replace(
+      /[。？！，、；：“”【】（）〔〕［］﹃﹄“ ”‘’﹁﹂—…－～《》〈〉「」]/g,
+      '',
+    )
+    .trim();
+
+  let result = '';
+  for (let i = 0; i < text.length; i += 1) {
+    if (text[i] >= 'A' && text[i] <= 'Z') {
+      result += text[i].toLowerCase();
+    } else {
+      result += text[i];
+    }
+  }
+
+  return `#${encodeURI(result)}`;
+};
+
+const openUrl = url => {
+  const cmd = `open ${url}`;
+  app.doScript(
+    'return do shell script item 1 of arguments',
+    ScriptLanguage.applescriptLanguage,
+    [cmd],
+  );
+};
+
 export {
   range,
   forEach,
@@ -171,4 +203,6 @@ export {
   padStart,
   tap,
   parseRange,
+  getMarkdownAnchor,
+  openUrl,
 };

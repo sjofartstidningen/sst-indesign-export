@@ -7,6 +7,7 @@
   "author": "Adam Bergman <adam@fransvilhelm.com>",
   "license": "MIT",
   "private": true,
+  "homepage": "https://github.com/sjofartstidningen/sst-indesign-export",
   "scripts": {
     "build": "TARGET_ENV=indesign extend-scripts bundle",
     "test": "extend-scripts test",
@@ -17,7 +18,6 @@
     "release": "semantic-release"
   },
   "dependencies": {
-    "JSON2": "^0.1.0",
     "semantic-release": "^15.0.0"
   },
   "devDependencies": {
