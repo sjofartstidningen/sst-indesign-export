@@ -1,6 +1,7 @@
 import './polyfills';
 import { join } from 'path'; // eslint-disable-line import/first
 import {
+  createErrorWindow,
   createInputWindow,
   createDropdownWindow,
   createProgressbarWindow,
@@ -17,7 +18,10 @@ import {
   clamp,
   padStart,
   tap,
+  getMarkdownAnchor,
+  openUrl,
 } from './utils';
+import errors from './utils/errors';
 import ConfigStore from './utils/configstore';
 import pkg from '../package.json';
 
@@ -28,6 +32,15 @@ const config = new ConfigStore({
     exportRoot: null,
   },
 });
+
+function getCurrentDocument(application) {
+  try {
+    const { activeDocument } = application;
+    return activeDocument;
+  } catch (err) {
+    throw new Error(errors.noDocumentOpen);
+  }
+}
 
 /**
  * Returns data about the current document which will be used by the program
@@ -43,20 +56,18 @@ function getDocumentData(doc) {
   const validIssue = issue && !Number.isNaN(Number.parseInt(issue, 10));
 
   if (!validYear || !validIssue) {
-    throw new Error(
-      `Filen kan inte exporteras då den antagligen ligger på fel plats
-Filen måste ligga i en mappstruktur liknande "/mapp/2018/01/${doc.name}"`,
-    );
+    throw new Error(errors.malformedFolderPath);
   }
 
   let exportRoot = config.get('exportRoot');
 
   if (!exportRoot) {
-    alert(`Detta är första gången du använder programmet
-Du måste därför välja var Bryggan-mappen finns på din dator`);
+    alert(
+      'This is the first time you are using this script\nYou therefore have to choose the root folder to export to',
+    );
 
-    const result = createFolderChooser({ label: 'Välj Bryggan-mappen' });
-    if (result.cancel) throw new Error('Avslutades av användaren');
+    const result = createFolderChooser({ label: 'Choose root folder' });
+    if (result.cancel) throw new Error(errors.cancelUser);
 
     config.set('exportRoot', result.value.absoluteURI);
     exportRoot = result.value.absoluteURI;
@@ -90,9 +101,9 @@ Du måste därför välja var Bryggan-mappen finns på din dator`);
  * @returns Array<number>
  */
 function getPagesRange(firstPage, lastPage) {
-  const allPages = 'Alla sidor'; // Keyword for selecting all pages
+  const allPages = 'All pages'; // Keyword for selecting all pages
   const input = createInputWindow({
-    name: 'Välj sidor:',
+    name: 'Choose pages:',
     initial: allPages,
   });
 
@@ -116,7 +127,7 @@ function getPagesRange(firstPage, lastPage) {
    * If the user cancels the operation throws an error.
    * This error will be swallowed higher up in the hierachy.
    */
-  if (result.cancel) throw new Error('Avslutades av användaren');
+  if (result.cancel) throw new Error(errors.cancelUser);
 
   /**
    * Return a array range of all pages if result.value === allPages.
@@ -151,15 +162,15 @@ function getPdfPreset() {
   );
 
   const dropdown = createDropdownWindow({
-    name: 'Välj PDF-inställning',
-    label: 'Inställningar:',
+    name: 'Choose PDF-preset',
+    label: 'Presets:',
     items: presets,
     initial,
   });
 
   const result = dropdown.show();
 
-  if (result.cancel) throw new Error('Avslutades av användaren');
+  if (result.cancel) throw new Error(errors.cancelUser);
 
   const choosenPreset = pdfExportPresets.itemByName(result.value);
 
@@ -182,8 +193,8 @@ function getPdfPreset() {
  */
 function exportPages(doc, { pages, preset, folder, generateName }) {
   const progressWindow = createProgressbarWindow({
-    name: 'Exporterar',
-    label: 'Exporterar sidor',
+    name: 'Exporting',
+    label: 'Exporting pages',
     max: pages.length,
   });
 
@@ -216,7 +227,7 @@ function exportPages(doc, { pages, preset, folder, generateName }) {
 
 function main() {
   try {
-    const currentDocument = app.activeDocument;
+    const currentDocument = getCurrentDocument(app);
     const documentData = getDocumentData(currentDocument);
 
     const pages = getPagesRange(documentData.first, documentData.last);
@@ -234,7 +245,16 @@ function main() {
         )}.pdf`,
     });
   } catch (err) {
-    alert(err.message);
+    const errorWindow = createErrorWindow({
+      name: 'An error occured',
+      label: err.message,
+    });
+    const { viewHelp } = errorWindow.show();
+
+    if (viewHelp) {
+      const anchor = getMarkdownAnchor(err.message);
+      openUrl(`${pkg.homepage}/blob/master/docs/errors.md${anchor}`);
+    }
   }
 }
 
