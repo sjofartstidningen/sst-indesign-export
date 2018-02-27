@@ -4,18 +4,30 @@ import { map, find, includes } from './index';
 import i18n from './i18n';
 import pkg from '../../package.json';
 
+/**
+ * Parse a version string (e.g. v1.0.0) into an array of [major, minor, patch]
+ *
+ * @param {any} v
+ */
 const parseVersion = v =>
   map(n => Number.parseInt(n, 10), v.replace(/\D/g, '').split(''));
 
 const versionGreaterThan = (v1, v2) => {
-  const parsedV1 = parseVersion(v1);
-  const parsedV2 = parseVersion(v2);
+  const ver1 = parseVersion(v1);
+  const ver2 = parseVersion(v2);
 
-  for (let i = 0; i < parsedV1.length; i += 1) {
-    if (parsedV1[i] < parsedV2[i]) return false;
+  for (let i = 0; i < 3; i += 1) {
+    const n1 = ver1[i];
+    const n2 = ver2[i];
+
+    if (n1 > n2) return true;
+    if (n2 > n1) return false;
+
+    if (!Number.isNaN(n1) && Number.isNaN(n2)) return true;
+    if (Number.isNaN(n1) && !Number.isNaN(n2)) return false;
   }
 
-  return true;
+  return false;
 };
 
 const actionWindow = ({ name, label, action }) => {
