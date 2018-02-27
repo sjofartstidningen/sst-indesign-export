@@ -1,21 +1,16 @@
 import i18n from './i18n';
 
-const translate = i18n($.locale);
-
 function setupButtonGroup(inst) {
   const buttonGroup = inst.add('group');
   buttonGroup.alignment = 'right';
 
-  const buttonOk = buttonGroup.add('button', undefined, translate('Ok'), {
+  const buttonOk = buttonGroup.add('button', undefined, i18n('Ok'), {
     name: 'ok',
   });
 
-  const buttonCancel = buttonGroup.add(
-    'button',
-    undefined,
-    translate('Cancel'),
-    { name: 'cancel' },
-  );
+  const buttonCancel = buttonGroup.add('button', undefined, i18n('Cancel'), {
+    name: 'cancel',
+  });
 
   return {
     group: buttonGroup,
@@ -33,18 +28,14 @@ function setupInputGroup({ label }, inst) {
   return { group: inputGroup, label: inputLabel };
 }
 
-function createErrorWindow({
-  name = translate('An error occured'),
-  size,
-  label,
-}) {
+function createErrorWindow({ name = i18n('An error occured'), size, label }) {
   const window = new Window('dialog', name, size);
   const labelGroup = window.add('group');
   labelGroup.alignment = 'left';
   labelGroup.add('statictext', undefined, label);
 
   const { group } = setupButtonGroup(window);
-  const helpButton = group.add('button', undefined, translate('View help'));
+  const helpButton = group.add('button', undefined, i18n('View help'));
   helpButton.addEventListener('click', () => window.close());
 
   return {
@@ -133,7 +124,7 @@ function createProgressbarWindow({ name, size, label, max }) {
   const progressbarText = progressbarGroup.add(
     'statictext',
     [15, 15, 75, 35],
-    `0 ${translate('of')} ${max}`,
+    `0 ${i18n('of')} ${max}`,
   );
 
   return {
@@ -145,7 +136,7 @@ function createProgressbarWindow({ name, size, label, max }) {
     },
     increase() {
       progressbar.value += 1;
-      progressbarText.text = `${progressbar.value} ${translate('of')} ${max}`;
+      progressbarText.text = `${progressbar.value} ${i18n('of')} ${max}`;
     },
   };
 }

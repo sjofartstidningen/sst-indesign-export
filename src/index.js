@@ -24,6 +24,7 @@ import {
 import i18n from './utils/i18n';
 import errors from './utils/errors';
 import ConfigStore from './utils/configstore';
+import checkForUpdate from './utils/check-update';
 import pkg from '../package.json';
 
 const config = new ConfigStore({
@@ -33,8 +34,6 @@ const config = new ConfigStore({
     exportRoot: null,
   },
 });
-
-const translate = i18n($.locale);
 
 function getCurrentDocument(application) {
   try {
@@ -66,13 +65,13 @@ function getDocumentData(doc) {
 
   if (!exportRoot) {
     alert(
-      translate(
+      i18n(
         'This is the first time you are using this script\nYou therefore have to choose the root folder to export to',
       ),
     );
 
     const result = createFolderChooser({
-      label: translate('Choose root folder'),
+      label: i18n('Choose root folder'),
     });
     if (result.cancel) throw new Error(errors.cancelUser);
 
@@ -108,9 +107,9 @@ function getDocumentData(doc) {
  * @returns Array<number>
  */
 function getPagesRange(firstPage, lastPage) {
-  const allPages = translate('All pages'); // Keyword for selecting all pages
+  const allPages = i18n('All pages'); // Keyword for selecting all pages
   const input = createInputWindow({
-    name: translate('Choose pages:'),
+    name: i18n('Choose pages:'),
     initial: allPages,
   });
 
@@ -169,8 +168,8 @@ function getPdfPreset() {
   );
 
   const dropdown = createDropdownWindow({
-    name: translate('Choose PDF-preset'),
-    label: translate('Presets:'),
+    name: i18n('Choose PDF-preset'),
+    label: i18n('Presets:'),
     items: presets,
     initial,
   });
@@ -200,8 +199,8 @@ function getPdfPreset() {
  */
 function exportPages(doc, { pages, preset, folder, generateName }) {
   const progressWindow = createProgressbarWindow({
-    name: translate('Exporting'),
-    label: translate('Exporting pages'),
+    name: i18n('Exporting'),
+    label: i18n('Exporting pages'),
     max: pages.length,
   });
 
@@ -251,10 +250,12 @@ function main() {
           page,
         )}.pdf`,
     });
+
+    checkForUpdate(config);
   } catch (err) {
     const errorWindow = createErrorWindow({
-      name: translate('An error occured'),
-      label: translate(err.message),
+      name: i18n('An error occured'),
+      label: i18n(err.message),
     });
     const { viewHelp } = errorWindow.show();
 
