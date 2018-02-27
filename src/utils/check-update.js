@@ -2,6 +2,7 @@ import { join } from 'path';
 import { parse } from './json';
 import { map, find, includes } from './index';
 import i18n from './i18n';
+import errors from './errors';
 import pkg from '../../package.json';
 
 /**
@@ -129,43 +130,50 @@ function checkForUpdate(store) {
   const shouldCheck = currentDate - lastCheck > 1000 * 60 * 60 * 24 * 30;
   if (!shouldCheck) return;
 
-  const [, owner, repo] = /\/(\w+)\/((?:\d|\w|-)+)\.git$/.exec(pkg.repository);
+  try {
+    const [, owner, repo] = /\/(\w+)\/((?:\d|\w|-)+)\.git$/.exec(
+      pkg.repository,
+    );
 
-  const githubApiUrl = `https://api.github.com/repos/${owner}/${repo}/releases/latest`;
-  const headers = `-H 'User-Agent: ${pkg.name}/${pkg.version}'`;
-  const cmd = `curl ${headers} '${githubApiUrl}'`;
+    const githubApiUrl = `https://api.github.com/repos/${owner}/${repo}/releases/latest`;
+    const headers = `-H 'User-Agent: ${pkg.name}/${pkg.version}'`;
+    const cmd = `curl ${headers} '${githubApiUrl}'`;
 
-  const response = app.doScript(
-    'return do shell script item 1 of arguments',
-    ScriptLanguage.applescriptLanguage,
-    [cmd],
-  );
+    const response = app.doScript(
+      'return do shell script item 1 of arguments',
+      ScriptLanguage.applescriptLanguage,
+      [cmd],
+    );
 
-  const { name, assets } = parse(response);
+    const { name, assets } = parse(response);
 
-  const shouldUpdate = versionGreaterThan(name, pkg.version);
-  const asset = find(x => includes(pkg.name, x.name), assets);
+    const shouldUpdate = versionGreaterThan(name, pkg.version);
+    const asset = find(x => includes(pkg.name, x.name), assets);
 
-  if (shouldUpdate && asset) {
-    const result = actionWindow({
-      name: i18n('Update available'),
-      label: i18n(
-        'A new version of this script is available, would you like to download it?',
-      ),
-      actionButton: i18n('Download update'),
-      action: () => downloadAsset(asset),
-    });
-
-    if (result !== 2) {
-      alert(
-        i18n(
-          'New script downloaded\nRemember to remove the old version and update any keyboard shortcuts created',
+    if (shouldUpdate && asset) {
+      const result = actionWindow({
+        name: i18n('Update available'),
+        label: i18n(
+          'A new version of this script is available, would you like to download it?',
         ),
-      );
-    }
-  }
+        actionButton: i18n('Download update'),
+        action: () => downloadAsset(asset),
+      });
 
-  store.set('lastUpdateCheck', currentDate);
+      if (result !== 2) {
+        alert(
+          i18n(
+            'New script downloaded\nRemember to remove the old version and update any keyboard shortcuts created',
+          ),
+        );
+      }
+    }
+
+    store.set('lastUpdateCheck', currentDate);
+  } catch (err) {
+    store.set('lastUpdateCheck', currentDate);
+    throw new Error(errors.checkUpdate);
+  }
 }
 
 export { checkForUpdate as default, versionGreaterThan };

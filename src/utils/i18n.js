@@ -21,6 +21,8 @@ const en_US = {
     "Path to this file doesn't match the expected structure",
   'From must be greater than or equal to to':
     'From must be greater than or equal to to',
+  'An error occured while checking for updates':
+    'An error occured while checking for updates',
   'Update available': 'Update available',
   'A new version of this script is available, would you like to download it?':
     'A new version of this script is available, would you like to download it?',
@@ -50,6 +52,8 @@ const sv_SE = {
     'Sökvägen till filen matchade inte den förväntade mappstrukturen',
   'From must be greater than or equal to to':
     'Från måste vara större än, eller lika stort som, till',
+  'An error occured while checking for updates':
+    'Något gick fel när skriptet letade efter en uppdatering',
   'Update available': 'Ny uppdatering tillgänglig',
   'A new version of this script is available, would you like to download it?':
     'En ny version av det här scriptet finns tillgängligt, vill du ladda ner det?',

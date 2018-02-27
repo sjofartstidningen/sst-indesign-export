@@ -60,3 +60,12 @@ The range input accepts different formats, e.g.:
 * `1,2-5,6-9,10`
 
 You get it, right?
+
+## An error occured while checking for updates
+
+This error occured while making a check to see if the script has been updated.
+Probably it's due to a missing internet connection or something like that.
+
+It will not affect your export and you might ignore it. But make sure to reach
+out to us if the error keeps on showing, even if you know are certain the
+internet connection is stable.
