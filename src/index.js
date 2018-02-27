@@ -24,6 +24,7 @@ import {
 import i18n from './utils/i18n';
 import errors from './utils/errors';
 import ConfigStore from './utils/configstore';
+import checkForUpdate from './utils/check-update';
 import pkg from '../package.json';
 
 const config = new ConfigStore({
@@ -251,6 +252,8 @@ function main() {
           page,
         )}.pdf`,
     });
+
+    checkForUpdate(config);
   } catch (err) {
     const errorWindow = createErrorWindow({
       name: translate('An error occured'),

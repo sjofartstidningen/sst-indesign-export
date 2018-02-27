@@ -94,6 +94,17 @@ const findIndex = (predicate, arr) => {
   return -1;
 };
 
+const find = (predicate, arr) => {
+  const index = findIndex(predicate, arr);
+  if (index < 0) return undefined;
+  return arr[index];
+};
+
+const includes = (search, arr) => {
+  if (search.length > arr.length) return false;
+  return arr.indexOf(search) !== -1;
+};
+
 const pipe = (init, ...fns) => reduce((f, g) => x => g(f(x)), init, fns);
 
 const toNumber = str => Number(str);
@@ -197,6 +208,8 @@ export {
   every,
   some,
   findIndex,
+  find,
+  includes,
   pipe,
   toNumber,
   clamp,
