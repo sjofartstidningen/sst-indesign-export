@@ -1,6 +1,7 @@
 import { join } from 'path';
 import { parse } from './json';
 import { map, find, includes } from './index';
+import i18n from './i18n';
 import pkg from '../../package.json';
 
 const parseVersion = v =>
@@ -29,8 +30,12 @@ const actionWindow = ({ name, label, action }) => {
   const buttonGroup = window.add('group');
   buttonGroup.alignment = 'right';
 
-  const downloadBtn = buttonGroup.add('button', undefined, 'Download update');
-  buttonGroup.add('button', undefined, 'Cancel', { name: 'cancel' });
+  const downloadBtn = buttonGroup.add(
+    'button',
+    undefined,
+    i18n('Download update'),
+  );
+  buttonGroup.add('button', undefined, i18n('Cancel'), { name: 'cancel' });
 
   downloadBtn.addEventListener('click', () => {
     window.close();
@@ -90,15 +95,18 @@ function checkForUpdate(store) {
 
   if (shouldUpdate && asset) {
     const result = actionWindow({
-      name: 'Update available',
-      label:
+      name: i18n('Update available'),
+      label: i18n(
         'A new version of this script is available, would you like to download it?',
+      ),
       action: () => downloadAsset(asset),
     });
 
     if (result !== 2) {
       alert(
-        'New script downloaded\nRemember to remove the old version and update any keyboard shortcuts created',
+        i18n(
+          'New script downloaded\nRemember to remove the old version and update any keyboard shortcuts created',
+        ),
       );
     }
   }
