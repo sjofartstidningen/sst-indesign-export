@@ -51,8 +51,8 @@ function getCurrentDocument(application) {
  * @returns {Object}
  */
 function getDocumentData(doc) {
-  const re = /\/(\d{4})\/(.{2,})$/g;
-  const [, year, issue] = re.exec(doc.filePath);
+  const re = /\/(\d{4})\/(\d{2}(?:(?: |-)(?:\w| |-)*)*)$/g;
+  const [, year, issue] = re.exec(decodeURI(doc.filePath));
 
   const validYear = year && !Number.isNaN(Number.parseInt(year, 10));
   const validIssue = issue && !Number.isNaN(Number.parseInt(issue, 10));
@@ -206,8 +206,8 @@ function exportPages(doc, { pages, preset, folder, generateName }) {
 
   progressWindow.show();
 
-  let actualFolder = new Folder(folder);
-  if (!actualFolder.exists) actualFolder = actualFolder.create();
+  const actualFolder = new Folder(folder);
+  if (!actualFolder.exists) actualFolder.create();
   const folderPath = actualFolder.absoluteURI;
 
   const exportPdf = pipe(
@@ -263,6 +263,8 @@ function main() {
       const anchor = getMarkdownAnchor(err.message);
       openUrl(`${pkg.homepage}/blob/master/docs/errors.md${anchor}`);
     }
+  } finally {
+    exit(); // eslint-disable-line
   }
 }
 
