@@ -1,4 +1,5 @@
 import { join } from 'path';
+import curl from './curl';
 import { parse } from './json';
 import { map, find, includes } from './index';
 import i18n from './i18n';
@@ -85,16 +86,9 @@ const actionWindow = ({ name, label, actionButton, action }) => {
  * @param {String} asset.name Name of the file to write to
  */
 function downloadAsset({ url, name }) {
-  const headers = `-H 'Accept: application/octet-stream' -H 'User-Agent: ${
-    pkg.name
-  }/${pkg.version}'`;
-  const cmd = `curl ${headers} '${url}' -L`;
-
-  const response = app.doScript(
-    'return do shell script item 1 of arguments',
-    ScriptLanguage.applescriptLanguage,
-    [cmd],
-  );
+  const response = curl(url, {
+    headers: { Accept: 'application/octet-stream' },
+  });
 
   const scriptsFolder = File($.fileName)
     .parent.fsName.toString()
@@ -136,14 +130,7 @@ function checkForUpdate(store) {
     );
 
     const githubApiUrl = `https://api.github.com/repos/${owner}/${repo}/releases/latest`;
-    const headers = `-H 'User-Agent: ${pkg.name}/${pkg.version}'`;
-    const cmd = `curl ${headers} '${githubApiUrl}'`;
-
-    const response = app.doScript(
-      'return do shell script item 1 of arguments',
-      ScriptLanguage.applescriptLanguage,
-      [cmd],
-    );
+    const response = curl(githubApiUrl);
 
     const { name, assets } = parse(response);
 
@@ -168,11 +155,10 @@ function checkForUpdate(store) {
         );
       }
     }
-
-    store.set('lastUpdateCheck', currentDate);
   } catch (err) {
-    store.set('lastUpdateCheck', currentDate);
     throw new Error(errors.checkUpdate);
+  } finally {
+    store.set('lastUpdateCheck', currentDate);
   }
 }
 
