@@ -5,7 +5,7 @@ const defaultHeaders = {
 };
 
 function curl(url, { headers = {} } = {}) {
-  const mergedHeaders = Object.etries({
+  const mergedHeaders = Object.entries({
     ...defaultHeaders,
     ...headers,
   })
