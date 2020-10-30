@@ -1,7 +1,7 @@
 import pkg from '../../package.json';
 
 const defaultHeaders = {
-  'User-Agent': `{pkg.name}/${pkg.version}`,
+  'User-Agent': `${pkg.name}/${pkg.version}`,
 };
 
 function curl(url, { headers = {} } = {}) {
